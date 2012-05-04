@@ -1,0 +1,25 @@
+h1 connect-stream-s3
+
+p Test page for <code>connect-stream-s3</code>. Try to upload one or more files. :)
+
+h2 Single File
+form(method="post", name="f", action="/single-file", enctype="multipart/form-data")
+  fieldset
+    legend Upload a File
+    input(type="file", name="file_1")
+  div.actions
+    button.btn.primary(type="submit") Upload
+    button.btn.cancel(type="button") Cancel
+
+h2 Multiple Files
+form(method="post", name="f", action="/multiple-files", enctype="multipart/form-data")
+  fieldset
+    legend Upload a Few Files
+    input(type="file", name="file_a")
+    br
+    input(type="file", name="file_b")
+    br
+    input(type="file", name="file_c")
+  div.actions
+    button.btn.primary(type="submit") Upload
+    button.btn.cancel(type="button") Cancel
