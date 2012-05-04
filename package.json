@@ -1,0 +1,35 @@
+{
+    "name" : "connect-stream-s3",
+    "description" : "Streaming connect middleware for uploading files to Amazon S3.",
+    "version" : "0.1.0",
+    "author" : {
+        "name" : "Andrew Chilton",
+        "email" : "chilts@appsattic.com",
+        "url" : "http://www.chilts.org/"
+    },
+    "homepage" : "https://github.com/appsattic/connect-stream-s3",
+    "contributors" : [],
+    "devDependencies" : {},
+    "dependencies": {
+      "awssum": "~0.4.1",
+      "express": "~2.5.9",
+      "async": "~0.1.18"
+    },
+    "main" : "connect-stream-s3.js",
+    "engines" : { "node": "*" },
+    "repository" : {
+        "type" : "git",
+        "url": "git://github.com/appsattic/connect-stream-s3.git"
+    },
+   "bugs" : {
+        "url" : "http://github.com/appsattic/connect-stream-s3/issues",
+        "mail" : "chilts@appsattic.com"
+    },
+    "licenses" : [{
+        "type": "MIT",
+        "url" : "http://github.com/appsattic/connect-stream-s3/raw/master/LICENSE"
+    }],
+    "keywords" : [
+        "express", "connect", "middleware", "amazon", "s3"
+    ]
+}
