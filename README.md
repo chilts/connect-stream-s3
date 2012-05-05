@@ -32,6 +32,8 @@
 
 Streaming connect middleware for uploading files to Amazon S3.
 
+Uses the awesome [awssum](https://github.com/appsattic/node-awssum/) for AWS goodness.
+
 # How to get it #
 
     $ npm -d install connect-stream-s3
@@ -42,10 +44,6 @@ Streaming connect middleware for uploading files to Amazon S3.
 var express = require('express');
 var connectStreamS3 = require('../connect-stream-s3');
 var amazon = require('awssum').load('amazon/amazon');
-
-var app = module.exports = express.createServer();
-
-app.use(express.bodyParser());
 
 // give each uploaded file a unique name (up to you to make sure they are unique, this is an example)
 var uniquifyObjectNames = function(req, res, next) {
@@ -64,12 +62,50 @@ var s3StreamMiddleware = connectStreamS3({
     concurrency     : 2, // number of concurrent uploads to S3 (default: 3)
 });
 
+var app = module.exports = express.createServer();
+
+app.use(express.bodyParser());
+
 app.post('/upload', uniquifyObjectNames, s3StreamMiddleware, function(req, res, next) {
-    console.log('File file_a uploaded as : ' + req.files.file_a.s3ObjectName);
-    console.log('File file_b uploaded as : ' + req.files.file_b.s3ObjectName);
-    console.log('File file_c uploaded as : ' + req.files.file_c.s3ObjectName);
+    for(var key in req.files) {
+        console.log('File "' + key + '" uploaded as : ' + req.files[key].s3ObjectName);
+    }
     res.redirect('/thanks');
 });
 ```
+
+# How Does it Work #
+
+<code>connect-stream-s3</code> relies upon <code>express.bodyParser()</code> since it uses the <code>req.files</code>
+object. This object already contains pointers to the files on disk and it is these files that are being used when
+uploading to Amazon S3.
+
+# Warning #
+
+<code>connect-stream-s3</code> looks for an attribute on each of the req.files objects called <code>s3ObjectName</code>
+which you *must* set in some middleware *before* the streaming middleware is called. Therefore the order goes (as the
+example above shows):
+
+    express.bodyParser();
+    uniquifyObjectNames(); // sets s3ObjectName on each uploaded file
+    s3StreamMiddleware();
+
+If you *don't* set s3ObjectName on each uploaded file, <code>connect-stream-s3</code> will complain and call next()
+with an error, so make sure you set it to values appropriate to your application.
+
+Note: <code>connect-stream-s3</code> originally used the <code>req.files[field].name</code> field as a default but this
+really makes no sense at all and has the side-effect that if someone uploads a file with a filename the same as a
+previous one, it would get overwritten. I decided that having this as a default was bad, so you are forced to set
+s3ObjectName.
+
+# Author #
+
+Written by [Andrew Chilton](http://www.chilts.org/blog/)
+
+Copyright 2012 [AppsAttic](http://www.appsattic.com/)
+
+# License #
+
+MIT. See LICENSE for more details.
 
 (Ends)

@@ -31,6 +31,14 @@ module.exports = function(options) {
     var s3 = new s3Service(accessKeyId, secretAccessKey, awsAccountId, region);
 
     return function handler(req, res, next) {
+        // check that each uploaded file has a s3ObjectName property (and quit early)
+        for(var fieldname in req.files) {
+            if ( !req.files[fieldname].s3ObjectName ) {
+                next('Error: The s3ObjectName field has not been set on the uploaded file "' + fieldname + '".');
+                return;
+            }
+        }
+
         // remember what happened to each of these files
         var allOk = true;
 
@@ -39,20 +47,16 @@ module.exports = function(options) {
             // open the file as a read stream
             var bodyStream = fs.createReadStream( req.files[fieldname].path );
 
-            // create the objectName from either what they have already set, or from the uploaded filename
-            var objectName = req.files[fieldname].s3ObjectName || req.files[fieldname].name;
-
             // create the data for s3.PutObject()
             var data = {
                 'BucketName'    : bucketName,
-                'ObjectName'    : objectName,
+                'ObjectName'    : req.files[fieldname].s3ObjectName,
                 'ContentLength' : req.files[fieldname].size,
                 'Body'          : bodyStream,
             };
 
             s3.PutObject(data, function(err, data) {
                 // remember what happened
-                req.files[fieldname].s3ObjectName = objectName;
                 req.files[fieldname].s3 = {
                     'err'  : err,
                     'data' : data,

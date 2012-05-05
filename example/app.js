@@ -108,9 +108,14 @@ app.post('/single-file', setS3ObjectName, s3StreamMiddleware, function(req, res,
 });
 
 app.post('/multiple-files', randomiseS3ObjectNames, s3StreamMiddleware, function(req, res, next) {
-    console.log('File file_a uploaded as : ' + req.files.file_a.s3ObjectName);
-    console.log('File file_b uploaded as : ' + req.files.file_b.s3ObjectName);
-    console.log('File file_c uploaded as : ' + req.files.file_c.s3ObjectName);
+    for(var key in req.files) {
+        console.log('File "' + key + '" uploaded as : ' + req.files[key].s3ObjectName);
+    }
+    res.redirect('/thanks');
+});
+
+app.post('/upload', s3StreamMiddleware, function(req, res, next) {
+    console.log('We should never get here, since connect-stream-s3 will error out');
     res.redirect('/thanks');
 });
 

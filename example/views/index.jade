@@ -23,3 +23,12 @@ form(method="post", name="f", action="/multiple-files", enctype="multipart/form-
   div.actions
     button.btn.primary(type="submit") Upload
     button.btn.cancel(type="button") Cancel
+
+h2 Single File but without middleware which sets s3ObjectName on the file (should error out)
+form(method="post", name="f", action="/upload", enctype="multipart/form-data")
+  fieldset
+    legend Upload a File
+    input(type="file", name="file")
+  div.actions
+    button.btn.primary(type="submit") Upload
+    button.btn.cancel(type="button") Cancel
