@@ -32,7 +32,7 @@
 
 Streaming connect middleware for uploading files to Amazon S3.
 
-Uses the awesome [awssum](https://github.com/appsattic/node-awssum/) for AWS goodness.
+Uses the awesome [AwsSum](https://github.com/appsattic/node-awssum/) for Amazon Web Services goodness.
 
 # How to get it #
 
@@ -42,7 +42,7 @@ Uses the awesome [awssum](https://github.com/appsattic/node-awssum/) for AWS goo
 
 ```
 var express = require('express');
-var connectStreamS3 = require('../connect-stream-s3');
+var connectStreamS3 = require('connect-stream-s3');
 var amazon = require('awssum').load('amazon/amazon');
 
 // give each uploaded file a unique name (up to you to make sure they are unique, this is an example)
@@ -62,6 +62,7 @@ var s3StreamMiddleware = connectStreamS3({
     concurrency     : 2, // number of concurrent uploads to S3 (default: 3)
 });
 
+// create the app and paths
 var app = module.exports = express.createServer();
 
 app.use(express.bodyParser());
@@ -80,7 +81,7 @@ app.post('/upload', uniquifyObjectNames, s3StreamMiddleware, function(req, res, 
 object. This object already contains pointers to the files on disk and it is these files that are being used when
 uploading to Amazon S3.
 
-# Warning #
+## Setting the Uploaded ObjectName for your Bucket ##
 
 <code>connect-stream-s3</code> looks for an attribute on each of the req.files objects called <code>s3ObjectName</code>
 which you *must* set in some middleware *before* the streaming middleware is called. Therefore the order goes (as the
@@ -97,6 +98,12 @@ Note: <code>connect-stream-s3</code> originally used the <code>req.files[field].
 really makes no sense at all and has the side-effect that if someone uploads a file with a filename the same as a
 previous one, it would get overwritten. I decided that having this as a default was bad, so you are forced to set
 s3ObjectName.
+
+# Reporting Issues, Bugs or Feature Requests #
+
+Let me know how you get on, whether you like it and if you encounter any problems:
+
+* https://github.com/appsattic/connect-stream-s3/issues
 
 # Author #
 
