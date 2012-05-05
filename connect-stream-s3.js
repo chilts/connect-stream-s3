@@ -39,15 +39,20 @@ module.exports = function(options) {
             // open the file as a read stream
             var bodyStream = fs.createReadStream( req.files[fieldname].path );
 
-            var options = {
-                BucketName    : bucketName,
-                ObjectName    : req.files[fieldname].name,
-                ContentLength : req.files[fieldname].size,
-                Body          : bodyStream,
+            // create the objectName from either what they have already set, or from the uploaded filename
+            var objectName = req.files[fieldname].s3ObjectName || req.files[fieldname].name;
+
+            // create the data for s3.PutObject()
+            var data = {
+                'BucketName'    : bucketName,
+                'ObjectName'    : objectName,
+                'ContentLength' : req.files[fieldname].size,
+                'Body'          : bodyStream,
             };
 
-            s3.PutObject(options, function(err, data) {
+            s3.PutObject(data, function(err, data) {
                 // remember what happened
+                req.files[fieldname].s3ObjectName = objectName;
                 req.files[fieldname].s3 = {
                     'err'  : err,
                     'data' : data,
@@ -55,7 +60,8 @@ module.exports = function(options) {
                 if (err) {
                     allOk = false;
                 } // else, everything was ok
-                // tell the queue we're finished
+
+                // tell the queue we're finished with this file
                 callback();
             });
         }
@@ -68,6 +74,7 @@ module.exports = function(options) {
             q.push(fieldname);
         }
 
+        // once the queue is completely empty, call the next middleware
         q.drain = function() {
             if ( allOk ) {
                 next();
