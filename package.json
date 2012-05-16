@@ -1,7 +1,7 @@
 {
     "name" : "connect-stream-s3",
     "description" : "Streaming connect middleware for uploading files to Amazon S3.",
-    "version" : "0.2.0",
+    "version" : "0.3.0",
     "author" : {
         "name" : "Andrew Chilton",
         "email" : "chilts@appsattic.com",
