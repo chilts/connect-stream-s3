@@ -14,7 +14,7 @@ var fs = require('fs');
 var async = require('async');
 var awssum = require('awssum');
 var amazon = awssum.load('amazon/amazon');
-var s3Service = awssum.load('amazon/s3');
+var S3 = awssum.load('amazon/s3').S3;
 
 module.exports = function(options) {
     options = options || {};
@@ -28,7 +28,12 @@ module.exports = function(options) {
     var concurrency     = options.concurrency || 3;
 
     // create the S3 API
-    var s3 = new s3Service(accessKeyId, secretAccessKey, awsAccountId, region);
+    var s3 = new S3({
+        'accessKeyId'     : accessKeyId,
+        'secretAccessKey' : secretAccessKey,
+        'awsAccountId'    : awsAccountId,
+        'region'          : region
+    });
 
     return function handler(req, res, next) {
         // check that each uploaded file has a s3ObjectName property (and quit early)
