@@ -40,6 +40,12 @@ var setS3ObjectName = function(req, res, next) {
         // connect-stream-s3 doesn't keep overwriting the same object in your bucket.
         //
         req.files.file.s3ObjectName = (new Date()).toISOString().substr(0, 19) + '-' + req.files.file.name;
+        
+        req.files.file.s3ObjectContentType = req.files[key].type;
+        req.files.file.s3ObjectCacheControl = 'max-age=864000, must-revalidate';
+        req.files.file.s3ObjectContentEncoding = 'gzip';
+        req.files.file.s3ObjectStorageClass = 'REDUCED_REDUNDANCY';
+        req.files.file.s3ObjectAcl = 'public-read';
     }
     // Else: no file, just ignore this for now. You may want to have checked that a file exists in some validation
     // middleware called prior to this one.
@@ -75,6 +81,12 @@ var randomiseS3ObjectNames = function(req, res, next) {
 
         // set the s3ObjectName to this created objectName
         req.files[key].s3ObjectName = objectName;
+        
+        req.files[key].s3ObjectContentType = req.files[key].type;
+        req.files[key].s3ObjectCacheControl = 'max-age=864000, must-revalidate';
+        req.files[key].s3ObjectContentEncoding = 'gzip';
+        req.files[key].s3ObjectStorageClass = 'REDUCED_REDUNDANCY';
+        req.files[key].s3ObjectAcl = 'public-read';
     }
     next();
 }
