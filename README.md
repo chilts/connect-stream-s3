@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/appsattic/connect-stream-s3.png)](http://travis-ci.org/appsattic/connect-stream-s3)
 ```
  _______  _______  _        _        _______  _______ _________
 (  ____ \(  ___  )( (    /|( (    /|(  ____ \(  ____ \\__   __/
