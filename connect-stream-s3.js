@@ -28,12 +28,13 @@ module.exports = function(options) {
     var concurrency     = options.concurrency || 3;
 
     // create the S3 API
-    var s3 = new S3({
+    var cred = {
         'accessKeyId'     : accessKeyId,
         'secretAccessKey' : secretAccessKey,
         'awsAccountId'    : awsAccountId,
         'region'          : region
-    });
+    };
+    var s3 = new S3(cred);
 
     return function handler(req, res, next) {
         // check that each uploaded file has a s3ObjectName property (and quit early)
@@ -46,6 +47,7 @@ module.exports = function(options) {
 
         // remember what happened to each of these files
         var allOk = true;
+        var errors = [];
 
         // create an async function to upload the file
         var upload = function(fieldname, callback) {
@@ -68,6 +70,7 @@ module.exports = function(options) {
                 };
                 if (err) {
                     allOk = false;
+                    errors.push(err);
                 } // else, everything was ok
 
                 // tell the queue we're finished with this file
@@ -89,7 +92,7 @@ module.exports = function(options) {
                 next();
             }
             else {
-                next('One or more of the files failed to upload to S3.');
+                next(errors);
             }
         };
     };
