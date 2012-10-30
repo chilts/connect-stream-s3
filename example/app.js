@@ -9,14 +9,16 @@
 //
 // --------------------------------------------------------------------------------------------------------------------
 
-var express = require('express');
-var connectStreamS3 = require('../connect-stream-s3');
-var amazon = require('awssum').load('amazon/amazon');
+var http = require('http');
+
+var express  = require('express');
+var streamS3 = require('../connect-stream-s3');
+var amazon   = require('awssum').load('amazon/amazon');
 
 // ----------------------------------------------------------------------------
 
 // set up some middleware that we'll specifically use for certain paths
-var s3StreamMiddleware = connectStreamS3({
+var s3StreamMiddleware = streamS3({
     accessKeyId     : process.env.ACCESS_KEY_ID,
     secretAccessKey : process.env.SECRET_ACCESS_KEY,
     awsAccountId    : process.env.AWS_ACCOUNT_ID,
@@ -82,7 +84,7 @@ var randomiseS3ObjectNames = function(req, res, next) {
 // ----------------------------------------------------------------------------
 
 // create your express server
-var app = module.exports = express.createServer();
+var app = express();
 
 // set up the views
 app.set('views', __dirname + '/views');
@@ -91,8 +93,8 @@ app.set('view engine', 'jade');
 // add the static middleware
 app.use(express.static(__dirname + '/htdocs/'));
 
-// bodyParser :)
-app.use(express.bodyParser());
+// only need the multipart parser but you can use express.bodyParser() instead
+app.use(express.multipart());
 
 // ----------------------------------------------------------------------------
 // pages
@@ -125,9 +127,10 @@ app.get('/thanks', function(req, res, next) {
 
 // ----------------------------------------------------------------------------
 
-// listen
-app.listen(3000);
-
-console.log("Express server listening on port %d in %s mode.", app.address().port, app.settings.env);
+// create the server and listen
+var port = 3000;
+http.createServer(app).listen(port, function() {
+    console.log("Express server listening on port " + port);
+});
 
 // ----------------------------------------------------------------------------
