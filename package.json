@@ -11,8 +11,8 @@
     "contributors" : [],
     "devDependencies" : {},
     "dependencies": {
-      "awssum": "~0.5.0",
-      "async": "~0.1.18"
+      "awssum": ">= 0.11.x",
+      "async": ">= 0.1.22"
     },
     "main" : "connect-stream-s3.js",
     "engines" : { "node": "*" },
