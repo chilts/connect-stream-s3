@@ -8,8 +8,15 @@
         "url" : "http://www.chilts.org/"
     },
     "homepage" : "https://github.com/appsattic/connect-stream-s3",
-    "contributors" : [],
-    "devDependencies" : {},
+    "contributors" : [
+        {
+            "name": "John Keyes",
+            "email": "john@keyes.ie"
+        }
+    ],
+    "devDependencies" : {
+        "vows": "0.7.0"
+    },
     "dependencies": {
       "awssum": ">= 0.11.x",
       "async": ">= 0.1.22"
