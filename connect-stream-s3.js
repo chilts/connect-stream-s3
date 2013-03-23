@@ -12,9 +12,8 @@
 var fs = require('fs');
 
 var async = require('async');
-var awssum = require('awssum');
-var amazon = awssum.load('amazon/amazon');
-var S3 = awssum.load('amazon/s3').S3;
+var amazonS3 = require('awssum-amazon-s3');
+var S3 = amazonS3.S3;
 
 module.exports = function(options) {
     options = options || {};
@@ -32,7 +31,7 @@ module.exports = function(options) {
         'accessKeyId'     : accessKeyId,
         'secretAccessKey' : secretAccessKey,
         'awsAccountId'    : awsAccountId,
-        'region'          : region
+        'region'          : region,
     };
     var s3 = new S3(cred);
 

@@ -11,7 +11,7 @@
     "contributors" : [],
     "devDependencies" : {},
     "dependencies": {
-      "awssum": ">= 0.11.x",
+      "awssum-amazon-s3": "1.1.x",
       "async": ">= 0.1.22"
     },
     "main" : "connect-stream-s3.js",

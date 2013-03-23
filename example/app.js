@@ -13,7 +13,7 @@ var http = require('http');
 
 var express  = require('express');
 var streamS3 = require('../connect-stream-s3');
-var amazon   = require('awssum').load('amazon/amazon');
+var amazonS3 = require('awssum-amazon-s3');
 
 // ----------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ var s3StreamMiddleware = streamS3({
     accessKeyId     : process.env.ACCESS_KEY_ID,
     secretAccessKey : process.env.SECRET_ACCESS_KEY,
     awsAccountId    : process.env.AWS_ACCOUNT_ID,
-    region          : amazon.US_EAST_1,
+    region          : amazonS3.US_EAST_1,
     bucketName      : process.env.BUCKET_NAME,
     concurrency     : 2,
 });
