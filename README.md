@@ -38,6 +38,8 @@ Uses the awesome [AwsSum](https://github.com/appsattic/node-awssum/) for Amazon 
 
     $ npm -d install connect-stream-s3
 
+You should get at least v0.6.0 so you get the ability to set extra options. See below.
+
 ## Example ##
 
 ```
@@ -99,6 +101,77 @@ Note: <code>connect-stream-s3</code> originally used the <code>req.files[field].
 really makes no sense at all and has the side-effect that if someone uploads a file with a filename the same as a
 previous one, it would get overwritten. I decided that having this as a default was bad, so you are forced to set
 s3ObjectName.
+
+# Streaming #
+
+Since connect-stream-s3 relies on express.bodyParser(), the files being uploaded have already been saved on disk. From
+here, connect-stream-s3 streams them to Amazon S3.
+
+Many people ask about streaming directly to S3, but I'm probably not going to make this module do this, mainly for the
+reason that if the upload to S3 fails, you have no way of retrying. With connect-stream-s3, the file is still on disk
+and you can take precautions to retry it.
+
+# Options #
+
+## accessKeyId ##
+
+Required.
+
+Specify your Amazon Access Key ID here.
+
+## secretAccessKey ##
+
+Required.
+
+Specify your Amazon Secret Access Key here.
+
+## awsAccountId ##
+
+Required.
+
+Specify your Amazon Account Id here.
+
+## region ##
+
+Required.
+
+Specify which region your bucket is in.
+
+## bucketName ##
+
+Required.
+
+Specify the bucket name to put each file into.
+
+## storageClass ##
+
+Default: 'STANDARD'
+
+If you don't provide the 'storageClass', then your object will be stored as normal using the 'STANDARD' storage
+class. If you do, you should set it to 'REDUCED_REDUNDANCY' and your object will be stored as that.
+
+## acl ##
+
+Default: 'private'
+
+Provide the canned Access Control List you want each uploaded file to. e.g. 
+
+Valid values: private | public-read | public-read-write | authenticated-read | bucket-owner-read |
+bucket-owner-full-control
+
+(See http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html for the latest list.)
+
+## cacheControl ##
+
+Provide a 'cacheControl' so you can specify caching on the uploaded files.
+
+(See http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html for the latest list.)
+
+## concurrency ##
+
+Default: 3
+
+Shows how many files to upload in parrallel.
 
 # Reporting Issues, Bugs or Feature Requests #
 

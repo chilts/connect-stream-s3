@@ -58,9 +58,14 @@ module.exports = function(options) {
                 'BucketName'    : bucketName,
                 'ObjectName'    : req.files[fieldname].s3ObjectName,
                 'ContentLength' : req.files[fieldname].size,
-                'ContentType' : req.files[fieldname].mime || 'binary/octet-stream',
+                'ContentType'   : req.files[fieldname].mime || 'binary/octet-stream',
                 'Body'          : bodyStream
             };
+
+            // add these additional options, if they have been set
+            if ( options.storageClass ) { data.StorageClass = options.storageClass; }
+            if ( options.acl          ) { data.Acl          = options.acl;          }
+            if ( options.cacheControl ) { data.CacheControl = options.cacheControl; }
 
             s3.PutObject(data, function(err, data) {
                 // remember what happened
