@@ -36,6 +36,12 @@ module.exports = function(options) {
     var s3 = new S3(cred);
 
     return function handler(req, res, next) {
+        // check files have been uploaded
+        if(req.files === undefined || req.files.length === undefined || req.files.length === 0) {
+            next('Error: no files uploaded.');
+            return;
+        }
+
         // check that each uploaded file has a s3ObjectName property (and quit early)
         for(var fieldname in req.files) {
             if ( !req.files[fieldname].s3ObjectName ) {
