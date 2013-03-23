@@ -24,6 +24,7 @@ module.exports = function(options) {
     var awsAccountId    = options.awsAccountId;
     var region          = options.region;
     var bucketName      = options.bucketName;
+    var maxAge          = options.maxAge || 864000;
     var concurrency     = options.concurrency || 3;
 
     // create the S3 API
@@ -58,14 +59,15 @@ module.exports = function(options) {
                 'BucketName'    : bucketName,
                 'ObjectName'    : req.files[fieldname].s3ObjectName,
                 'ContentLength' : req.files[fieldname].size,
-                'Body'          : bodyStream,
+                'CacheControl'  : 'max-age=' + maxAge,
+                'Body'          : bodyStream
             };
 
             s3.PutObject(data, function(err, data) {
                 // remember what happened
                 req.files[fieldname].s3 = {
                     'err'  : err,
-                    'data' : data,
+                    'data' : data
                 };
                 if (err) {
                     allOk = false;
@@ -75,7 +77,7 @@ module.exports = function(options) {
                 // tell the queue we're finished with this file
                 callback();
             });
-        }
+        };
 
         // create a queue so we can do all of the uploaded files to S3
         var q = async.queue(upload, concurrency);
