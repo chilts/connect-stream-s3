@@ -101,7 +101,7 @@ var myS3Middlware = function(req, res, next) {
 
         // if this file is an image, cache it for a long time
         if ( req.files[key].name.match(/\.(jpg|png)$/) ) {
-            req.files[key].s3CacheControl = 365 * 24 * 60 * 60;
+            req.files[key].s3CacheControl = 'max-age=864000, must-revalidate';
         }
     }
     next();
