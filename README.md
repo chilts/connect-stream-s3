@@ -78,11 +78,35 @@ app.post('/upload', uniquifyObjectNames, s3StreamMiddleware, function(req, res, 
 });
 ```
 
-# How Does it Work #
+## Setting Upload Options per File ##
 
-<code>connect-stream-s3</code> relies upon <code>express.bodyParser()</code> since it uses the <code>req.files</code>
-object. This object already contains pointers to the files on disk and it is these files that are being used when
-uploading to Amazon S3.
+In your middleware which runs after ```bodyParser()``` and prior to ```connect-stream-s3```, you can set a number of
+things which will be used in the ```PutObject```.
+
+* s3ObjectName
+* s3ObjectCacheControl
+* s3ObjectContentEncoding
+* s3ObjectStorageClass
+* s3ObjectAcl
+
+For example:
+
+```
+var myS3Middlware = function(req, res, next) {
+    for(var key in req.files) {
+        req.files[key].s3ObjectName = '' + parseInt(Math.random(100000));
+
+        // this file as reduced redundancy
+        req.files[key].s3StorageClass = 'REDUCED_REDUNDANCY';
+
+        // if this file is an image, cache it for a long time
+        if ( req.files[key].name.match(/\.(jpg|png)$/) ) {
+            req.files[key].s3CacheControl = 365 * 24 * 60 * 60;
+        }
+    }
+    next();
+}
+```
 
 ## Setting the Uploaded ObjectName for your Bucket ##
 
@@ -102,16 +126,7 @@ really makes no sense at all and has the side-effect that if someone uploads a f
 previous one, it would get overwritten. I decided that having this as a default was bad, so you are forced to set
 s3ObjectName.
 
-# Streaming #
-
-Since connect-stream-s3 relies on express.bodyParser(), the files being uploaded have already been saved on disk. From
-here, connect-stream-s3 streams them to Amazon S3.
-
-Many people ask about streaming directly to S3, but I'm probably not going to make this module do this, mainly for the
-reason that if the upload to S3 fails, you have no way of retrying. With connect-stream-s3, the file is still on disk
-and you can take precautions to retry it.
-
-# Options #
+# Middleware Options #
 
 ## accessKeyId ##
 
@@ -172,6 +187,16 @@ Provide a 'cacheControl' so you can specify caching on the uploaded files.
 Default: 3
 
 Shows how many files to upload in parrallel.
+
+# How Does it Work #
+
+<code>connect-stream-s3</code> relies upon <code>express.bodyParser()</code> since it uses the <code>req.files</code>
+object. This object already contains pointers to the files on disk and it is these files that are being used when
+uploading to Amazon S3.
+
+Many people ask about streaming directly to S3, but I'm probably not going to make this module do this, mainly for the
+reason that if the upload to S3 fails, you have no way of retrying. With connect-stream-s3, the file is still on disk
+and you can take precautions to retry it.
 
 # Reporting Issues, Bugs or Feature Requests #
 

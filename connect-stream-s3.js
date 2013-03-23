@@ -50,26 +50,42 @@ module.exports = function(options) {
 
         // create an async function to upload the file
         var upload = function(fieldname, callback) {
+            var fileInfo = req.files[fieldname];
+
             // open the file as a read stream
-            var bodyStream = fs.createReadStream( req.files[fieldname].path );
+            var bodyStream = fs.createReadStream( fileInfo.path );
 
             // create the data for s3.PutObject()
             var data = {
                 'BucketName'    : bucketName,
-                'ObjectName'    : req.files[fieldname].s3ObjectName,
-                'ContentLength' : req.files[fieldname].size,
-                'ContentType'   : req.files[fieldname].mime || 'binary/octet-stream',
+                'ObjectName'    : fileInfo.s3ObjectName,
+                'ContentLength' : fileInfo.size,
+                'ContentType'   : fileInfo.type || 'binary/octet-stream',
                 'Body'          : bodyStream
             };
 
-            // add these additional options, if they have been set
+            // add these additional options, if they have been set as a default
             if ( options.storageClass ) { data.StorageClass = options.storageClass; }
             if ( options.acl          ) { data.Acl          = options.acl;          }
             if ( options.cacheControl ) { data.CacheControl = options.cacheControl; }
 
+            // finally, overwrite these with ones you set in the middleware
+            if ( fileInfo.s3ObjectCacheControl ) {
+                data.CacheControl = fileInfo.s3ObjectCacheControl;
+            }
+            if ( fileInfo.s3ObjectContentEncoding ) {
+                data.ContentEncoding = fileInfo.s3ObjectContentEncoding;
+            }
+            if ( fileInfo.s3ObjectStorageClass ) {
+                data.StorageClass = fileInfo.s3ObjectStorageClass;
+            }
+            if ( fileInfo.s3ObjectAcl ) {
+                data.Acl = fileInfo.s3ObjectAcl;
+            }
+
             s3.PutObject(data, function(err, data) {
                 // remember what happened
-                req.files[fieldname].s3 = {
+                fileInfo.s3 = {
                     'err'  : err,
                     'data' : data,
                 };
