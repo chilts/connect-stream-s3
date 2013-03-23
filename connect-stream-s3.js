@@ -37,16 +37,14 @@ module.exports = function(options) {
 
     return function handler(req, res, next) {
         // check files have been uploaded
-        if(req.files === undefined || req.files.length === undefined || req.files.length === 0) {
-            next('Error: no files uploaded.');
-            return;
+        if( req.files === undefined || req.files.length === undefined || req.files.length === 0 ) {
+            return next('Error: no files uploaded.');
         }
 
         // check that each uploaded file has a s3ObjectName property (and quit early)
         for(var fieldname in req.files) {
             if ( !req.files[fieldname].s3ObjectName ) {
-                next('Error: The s3ObjectName field has not been set on the uploaded file "' + fieldname + '".');
-                return;
+                return next('Error: The s3ObjectName field has not been set on the uploaded file "' + fieldname + '".');
             }
         }
 
