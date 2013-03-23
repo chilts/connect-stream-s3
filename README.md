@@ -50,6 +50,7 @@ var uniquifyObjectNames = function(req, res, next) {
     for(var key in req.files) {
         req.files[key].s3ObjectName = '' + parseInt(Math.random(100000));
     }
+    next();
 }
 
 // set up the connect-stream-s3 middleware
