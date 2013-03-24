@@ -32,7 +32,7 @@
 
 Streaming connect middleware for uploading files to Amazon S3.
 
-Uses the awesome [AwsSum](https://github.com/appsattic/node-awssum/) for Amazon Web Services goodness.
+Uses the awesome [AwsSum](https://github.com/awssum/awssum-amazon-s3/) for Amazon Web Services goodness.
 
 # How to get it #
 
@@ -44,8 +44,8 @@ You should get at least v0.6.0 so you get the ability to set extra options. See 
 
 ```
 var express = require('express');
-var connectStreamS3 = require('connect-stream-s3');
-var amazon = require('awssum').load('amazon/amazon');
+var streamS3 = require('../connect-stream-s3');
+var amazonS3 = require('awssum-amazon-s3');
 
 // give each uploaded file a unique name (up to you to make sure they are unique, this is an example)
 var uniquifyObjectNames = function(req, res, next) {
@@ -56,13 +56,13 @@ var uniquifyObjectNames = function(req, res, next) {
 }
 
 // set up the connect-stream-s3 middleware
-var s3StreamMiddleware = connectStreamS3({
+var s3StreamMiddleware = streamS3({
     accessKeyId     : process.env.ACCESS_KEY_ID,
     secretAccessKey : process.env.SECRET_ACCESS_KEY,
     awsAccountId    : process.env.AWS_ACCOUNT_ID,
-    region          : amazon.US_EAST_1,
-    bucketName      : 'your-bucket-name',
-    concurrency     : 2, // number of concurrent uploads to S3 (default: 3)
+    region          : amazonS3.US_EAST_1,
+    bucketName      : process.env.BUCKET_NAME,
+    concurrency     : 2,
 });
 
 // create the app and paths
